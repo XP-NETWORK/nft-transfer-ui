@@ -11,26 +11,23 @@ import {
   XPRow,
   XPColumn,
   XPLabel,
-  XPDiv,
-  XPInput,
   XPTransaction,
-  XPInfo,
   XPSpace
 } from './StyledComponents'
 import SwapChains from './SwapChains';
 import Selector from './Selector';
 import SendButton from './SendButton';
 
-import './App.css';
-
-
-const chains = ['XP.network', 'Elrond'];
-
 
 /********************************************************
  *                    APP Component                     *
  ********************************************************/
 function App() {
+
+  // Global constants
+  const chains = ['XP.network', 'Elrond'];
+  //                enabled, disabled, green, red
+  const sendStates = [false, true, 'success', 'failure']
 
   // =====================================================
   //                      S T A T E
@@ -45,8 +42,30 @@ function App() {
   const [from, setFrom] = useState(chains[0]);
   // Target Blockchain
   const [to, setTo] = useState(chains[1]);
+
   // NFT hash identifier
   const [nft, setNFT] = useState('');
+
+  // ESDT NFT nonce
+  const [nonce, setNonce] = useState('');
+
+  // ESDT NFT nonce
+  const [displayNonce, setDisplayNonce] = useState('none');
+
+  // Enabled / disaabled SEND button states
+  const [sendInactive, setSendInactive] = useState(sendStates[0]);
+  // SEND button states: Success = green, Failure = red
+  const [execResult, setExecResult] = useState('') // No state
+
+
+
+  useEffect(() => {
+    if (from === chains[1]) {
+      setDisplayNonce('flex')
+    }else{
+      setDisplayNonce('none')
+    }
+  }, [from, chains]);
 
   // =====================================================
   //                    EVENT HANDLERS
@@ -57,7 +76,7 @@ function App() {
    * 
    * button click handler
    */
-   const handleSwapChains = () => {
+  const handleSwapChains = () => {
 
     const temp_to = to;
     setTo(from);
@@ -72,8 +91,16 @@ function App() {
   const handleFromChange = (newValue) => {
     setFrom(newValue)
 
-    console.log(from, to)
-    
+    // Avoid the same source & target blockchains
+    if (to === newValue) {
+      chains.forEach(chain => {
+        if (chain !== to) {
+          setTo(chain)
+          return from;
+        }
+      })
+    }
+
   }
 
   /**
@@ -83,8 +110,13 @@ function App() {
   const handleToChange = (newValue) => {
     setTo(newValue)
 
-    if( from === newValue){
-
+    // Avoid the same source & target blockchains
+    if (from === newValue) {
+      chains.forEach(chain => {
+        if (chain !== from) {
+          setFrom(chain)
+        }
+      })
     }
   }
 
@@ -110,6 +142,49 @@ function App() {
    */
   const handleNftChange = (e) => {
     setNFT(e.target.value)
+  }
+
+  const handleNonceChange = (e) => {
+    setNonce(e.target.value)
+  }
+
+  /**
+   * SEND button onClick handler
+   */
+  const handleSendClick = () => {
+
+    setSendInactive(sendStates[1]);
+
+    try {
+
+      // The sending transaction code goes here:
+
+
+      // ...
+
+
+      // In case of success => display success for 3 sec.
+      setExecResult(sendStates[2]) // Success
+      setTimeout(() => {
+        // Release the button
+        setExecResult('') // Neither success nor failure
+        setSendInactive(sendStates[0]); // Enabled
+
+      }, 3000);
+
+
+    } catch (error) {
+
+      // In case of an error => display error for 3 sec.
+      setExecResult(sendStates[3]) // Failure
+      setTimeout(() => {
+        // Release the button
+        setExecResult('') // Neither success nor failure
+        setSendInactive(sendStates[0]); // Enabled
+      }, 3000);
+
+    }
+
   }
 
 
@@ -220,7 +295,31 @@ function App() {
             {/* ---------- The fifth Row of elements ------- */}
             {/* -------------------------------------------- */}
 
-            <SendButton />
+            <XPRow
+              style={{ display: `${displayNonce}` }}
+            >
+              <XPLabel>ESDT NFT nonce</XPLabel>
+              <XPTransaction
+                value={nonce}
+                onChange={handleNonceChange}
+              ></XPTransaction>
+
+            </XPRow>
+
+            <XPRow
+              style={{ display: `${displayNonce}` }}
+            >
+              <XPColumn>
+                <XPSpace />
+              </XPColumn>
+            </XPRow>
+
+
+            <SendButton
+              onClick={handleSendClick}
+              inactive={sendInactive}
+              className={execResult}
+            />
 
           </XPFlexCenter>
         </XPBoxCenter>

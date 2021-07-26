@@ -9,7 +9,6 @@ import {
     XPDropDownContent,
     XPDropDownElement
 } from './StyledComponents';
-import { DetectOutsideClick } from "./@utils/closeDropDown";
 
 /**
  * Custom SELECT component
@@ -104,9 +103,9 @@ const Selector = ({ value, data, onClick, onChange, menuId }) => {
                 id={menuId}
             >
                 {   // Loop over the data elements:
-                    data.map(item => {
+                    data.map((item, id) => {
                         return (
-                            <XPDropDownElement onClick={() => handleXPDropDownClick(item)} >
+                            <XPDropDownElement key={id} onClick={() => handleXPDropDownClick(item)} >
                                 <XPWrapper>
                                     {/* ================================== 1. SVG ICON =================================*/}
                                     {
