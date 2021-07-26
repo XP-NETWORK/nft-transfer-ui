@@ -9,7 +9,7 @@ import {
     XPDropDownContent,
     XPDropDownElement
 } from './StyledComponents';
-import {DetectOutsideClick} from "./@utils/closeDropDown";
+import { DetectOutsideClick } from "./@utils/closeDropDown";
 
 /**
  * Custom SELECT component
@@ -23,23 +23,10 @@ const Selector = ({ value, data, onClick, onChange, menuId }) => {
 
     const [display, setDisplay] = useState('none');
     const [borderRadius, setBorderRadius] = useState(6)
-    
+
 
     //ref to close dropdown
     const closeDropDownRef = useRef(null);
-
-    // If the data contains account in an Object
-    // Like {KEY:"value"}
-    // Extract the keys only
-    // if ("ALICE" in data || "XP-ALICE" in data) {
-    //     data = Object.keys(data)
-    // }
-
-    // If no value is available
-    // Default to the first element in data
-    if (!value) {
-        value = data[0]
-    }
 
     const borderRadiusHandler = () => display === "none" ? setBorderRadius(0) : setBorderRadius(6);
 
@@ -51,18 +38,9 @@ const Selector = ({ value, data, onClick, onChange, menuId }) => {
     const handleClick = () => {
         borderRadiusHandler();
 
-        console.log(display, menuId, closeDropDownRef['current']['id'])
-
-        if (closeDropDownRef && closeDropDownRef['current']['id'] === '' + menuId && display === 'block'){
-            setDisplay("none")
-        }else{
-            // display === "none"
-            // ? setDisplay("block") 
-            // : setDisplay("none");
-            setDisplay("block")
-        }
-
-        
+        display === "none"
+            ? setDisplay("block") 
+            : setDisplay("none");
 
     }
 
@@ -73,23 +51,19 @@ const Selector = ({ value, data, onClick, onChange, menuId }) => {
      * @param {String} datum 
      */
     const handleXPDropDownClick = (datum) => {
-        if (display === 'block') {
-            setDisplay('none');
-        }
-
         onChange(datum)
     }
 
-    DetectOutsideClick(closeDropDownRef, () =>{
-        console.log(closeDropDownRef);
-        setTimeout(() => {
-            if(display !== "none") {
-                setBorderRadius(6)
-                setDisplay('none')
-            }
-        }, 100)
-    }
-  );
+    // DetectOutsideClick(closeDropDownRef, () => {
+    //     console.log(closeDropDownRef);
+    //     setTimeout(() => {
+    //         if (display !== "none") {
+    //             setBorderRadius(6)
+    //             setDisplay('none')
+    //         }
+    //     }, 100)
+    // }
+    // );
 
     return (
 
@@ -99,17 +73,17 @@ const Selector = ({ value, data, onClick, onChange, menuId }) => {
 
         <XPDropDown
             onClick={() => handleClick()}
-	    style={{borderBottomRightRadius: borderRadius + "px" ,borderBottomLeftRadius: borderRadius + "px"}}
+            style={{ borderBottomRightRadius: borderRadius + "px", borderBottomLeftRadius: borderRadius + "px" }}
         >
 
             <XPWrapper>
 
                 {/* ================================== 1. SVG ICON =================================*/}
-                {/* {
-                    value && (value === 'HECO' || value === 'HT' || value.slice(0, 3) === 'XP-')
+                {
+                    value && (value === data[1])
                         ? <ElrondLogo />
                         : <SubstrateLogo />
-                } */}
+                }
 
                 {/* ================================= 2. TEXT FIELD ================================*/}
                 <XPStyledText>{value}</XPStyledText>
@@ -135,11 +109,11 @@ const Selector = ({ value, data, onClick, onChange, menuId }) => {
                             <XPDropDownElement onClick={() => handleXPDropDownClick(item)} >
                                 <XPWrapper>
                                     {/* ================================== 1. SVG ICON =================================*/}
-                                    {/* {
-                                        item && (item === 'HECO' || item === 'HT' || item.slice(0, 3) === 'XP-')
+                                    {
+                                        item && (item === data[1])
                                             ? <ElrondLogo />
                                             : <SubstrateLogo />
-                                    } */}
+                                    }
                                     {/* ================================= 2. TEXT FIELD ================================*/}
                                     <XPStyledText>{item}</XPStyledText>
                                 </XPWrapper>
